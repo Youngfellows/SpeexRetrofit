@@ -20,4 +20,10 @@
         android:onClick="getHost"
         android:text="获取域名"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="upgradeConfig"
+        android:text="更新配置单"/>
+
 </LinearLayout>

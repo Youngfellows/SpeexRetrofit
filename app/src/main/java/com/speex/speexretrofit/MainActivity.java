@@ -5,11 +5,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.alibaba.fastjson.JSON;
+import com.speex.speexretrofit.bean.Content;
+import com.speex.speexretrofit.bean.UpdateAppConfigBean;
+import com.speex.speexretrofit.interfaces.UpgradeRequestCallBack;
 import com.speex.speexretrofit.manager.DoanloadCallback;
 import com.speex.speexretrofit.manager.RetrofitManager;
 import com.speex.speexretrofit.utils.URLUtils;
 
 import java.io.File;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
@@ -69,5 +74,41 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * 更新配置单
+     *
+     * @param view
+     */
+    public void upgradeConfig(View view) {
+        String configUrl = "http://aispeech-tvui-public.oss-cn-shenzhen.aliyuncs.com/release/dangbei/version-guide-1.1.json";
+
+        RetrofitManager.getInstance().upgradeConfig(configUrl, new UpgradeRequestCallBack() {
+            @Override
+            public void requestSuccess(String data) {
+
+                UpdateAppConfigBean configBean = JSON.parseObject(data, UpdateAppConfigBean.class);
+                List<Content> appArray = configBean.getContent();
+                Content tvuiApp = null;//TVUI下载信息
+                for (Content app : appArray) {
+                    String component = app.getComponent();
+                    String mDownVersionName = app.getVersionName();
+                    int mDownVersionCode = Integer.parseInt(app.getVersionCode());
+                    String mMd5 = app.getMd5();//APK的MD5值
+                    String changeLog = app.getChangeLog();
+                    String changlog = changeLog;
+                    String appUrl = app.getUrl();
+
+                    Log.d(TAG, "component: " + component + "\nversionCode: " + mDownVersionCode + "\nversionName: " + mDownVersionName + "\nmd5: " + mMd5 + "\nappUrl: " + appUrl + "\nchangeLog: " + changeLog);
+
+                }
+            }
+
+            @Override
+            public void requestError(String exception) {
+                Log.e(TAG, "requestError " + exception);
+            }
+        });
+    }
 
 }

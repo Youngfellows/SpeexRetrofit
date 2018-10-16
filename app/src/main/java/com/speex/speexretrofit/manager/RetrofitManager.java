@@ -3,7 +3,10 @@ package com.speex.speexretrofit.manager;
 import android.util.Log;
 
 import com.speex.speexretrofit.entity.FileDownloadEntity;
+import com.speex.speexretrofit.interfaces.UpgradeRequestCallBack;
+import com.speex.speexretrofit.net.IApiService;
 import com.speex.speexretrofit.net.RetrofitCallback;
+import com.speex.speexretrofit.net.RetrofitClient;
 import com.speex.speexretrofit.net.RetrofitFileUtils;
 import com.speex.speexretrofit.utils.URLUtils;
 
@@ -128,4 +131,49 @@ public class RetrofitManager {
             }
         });
     }
+
+
+    /**
+     * 获取更新配置单
+     *
+     * @param configUrl
+     */
+    public void upgradeConfig(String configUrl, final UpgradeRequestCallBack callback) {
+
+        String url = URLUtils.getUrl(configUrl);
+        String baseUrl = URLUtils.getHost(configUrl);
+        Log.i(TAG, baseUrl);
+        Log.i(TAG, url);
+
+        IApiService iApiService = RetrofitClient.getInstance(baseUrl).getiApiService();
+        Call<ResponseBody> call = iApiService.upgradeConfig(url);
+        call.enqueue(new RetrofitCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String data = response.body().string();
+                        Log.i(TAG, "data -->>>  " + data);
+                        if (callback != null) {
+                            callback.requestSuccess(data);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        if (callback != null) {
+                            callback.requestError(e.getMessage());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e(TAG, "onFailure " + t.getMessage());
+                if (callback != null) {
+                    callback.requestError(t.getMessage());
+                }
+            }
+        });
+    }
+
 }

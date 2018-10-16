@@ -10,8 +10,25 @@ import retrofit2.http.Path;
  */
 public interface IApiService {
 
+    /**
+     * 文件下载
+     *
+     * @param url
+     * @return
+     */
     @GET("{url}")
     Call<ResponseBody> download(@Path(value = "url", encoded = true) String url);
 
     //http://aispeech-tvui-public.oss-cn-shenzhen.aliyuncs.com/release/dangbei/version-guide-1.1.json
+
+    /**
+     * 请求更新配置
+     *
+     * @param url
+     * @return
+     */
+    @GET("{url}")
+    Call<ResponseBody> upgradeConfig(@Path(value = "url", encoded = true) String url);
+
+
 }
