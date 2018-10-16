@@ -1,7 +1,7 @@
 package com.speex.speexretrofit.entity;
 
-import com.speex.speexretrofit.http.BaseFileDownload;
-import com.speex.speexretrofit.http.RetrofitService;
+import com.speex.speexretrofit.net.BaseFileDownload;
+import com.speex.speexretrofit.net.IApiService;
 
 import retrofit2.Call;
 
@@ -18,7 +18,7 @@ public class FileDownloadEntity extends BaseFileDownload {
     }
 
     @Override
-    public Call getFileDownloadCall(RetrofitService retrofitService) {
-        return retrofitService.download(url);
+    public Call getFileDownloadCall(IApiService IApiService) {
+        return IApiService.download(url);
     }
 }

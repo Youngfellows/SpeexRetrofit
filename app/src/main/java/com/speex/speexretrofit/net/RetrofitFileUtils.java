@@ -1,4 +1,4 @@
-package com.speex.speexretrofit.http;
+package com.speex.speexretrofit.net;
 
 import java.io.IOException;
 
@@ -10,27 +10,26 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * 文件下载工具类
+ * 文件下载、文件上传工具类
  */
 public class RetrofitFileUtils {
-
-    public static final String BASE_URL = RetrofitService.BASE_URL;
 
     private RetrofitFileUtils() {
     }
 
-    private static <T> RetrofitService getRetrofitService() {
+    private static <T> IApiService getRetrofitService(String baseUrl) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         Retrofit retrofit = new Retrofit.Builder()
                 .client(builder.build())
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BASE_URL)
+                //.baseUrl(BASE_URL)
+                .baseUrl(baseUrl)
                 .build();
-        RetrofitService retrofitService = retrofit.create(RetrofitService.class);
-        return retrofitService;
+        IApiService IApiService = retrofit.create(IApiService.class);
+        return IApiService;
     }
 
-    private static <T> RetrofitService getRetrofitService(final RetrofitCallback<T> callback) {
+    private static <T> IApiService getRetrofitService(String baseUrl, final RetrofitCallback<T> callback) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.addInterceptor(new Interceptor() {
             @Override
@@ -41,20 +40,21 @@ public class RetrofitFileUtils {
         });
 
 
-//        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-//                .addNetworkInterceptor(
-//                        new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-//                .connectTimeout(6, TimeUnit.SECONDS)
-//                .build();
+        //        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+        //                .addNetworkInterceptor(
+        //                        new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+        //                .connectTimeout(6, TimeUnit.SECONDS)
+        //                .build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(builder.build())
-//                .client(okHttpClient)
+                //.client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BASE_URL)
+                //.baseUrl(BASE_URL)
+                .baseUrl(baseUrl)
                 .build();
-        RetrofitService retrofitService = retrofit.create(RetrofitService.class);
-        return retrofitService;
+        IApiService IApiService = retrofit.create(IApiService.class);
+        return IApiService;
     }
 
     /**
@@ -63,8 +63,8 @@ public class RetrofitFileUtils {
      * @param baseFileUpload
      * @param callback
      */
-    public static <T> Call uploadFile(BaseFileUpload baseFileUpload, RetrofitCallback<T> callback) {
-        Call call = baseFileUpload.getFileUploadCall(getRetrofitService());
+    public static <T> Call uploadFile(String baseUrl, BaseFileUpload baseFileUpload, RetrofitCallback<T> callback) {
+        Call call = baseFileUpload.getFileUploadCall(getRetrofitService(baseUrl));
         call.enqueue(callback);
         return call;
     }
@@ -75,8 +75,8 @@ public class RetrofitFileUtils {
      * @param baseFileDownload
      * @param callback
      */
-    public static <T> Call downloadFile(BaseFileDownload baseFileDownload, RetrofitCallback<T> callback) {
-        Call call = baseFileDownload.getFileDownloadCall(getRetrofitService(callback));
+    public static <T> Call downloadFile(String baseUrl, BaseFileDownload baseFileDownload, RetrofitCallback<T> callback) {
+        Call call = baseFileDownload.getFileDownloadCall(getRetrofitService(baseUrl, callback));
         call.enqueue(callback);
         return call;
     }

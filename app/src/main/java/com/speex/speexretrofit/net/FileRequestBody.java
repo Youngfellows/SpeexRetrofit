@@ -1,4 +1,4 @@
-package com.speex.speexretrofit.http;
+package com.speex.speexretrofit.net;
 
 import java.io.IOException;
 
