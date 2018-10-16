@@ -12,4 +12,6 @@ public interface IApiService {
 
     @GET("{url}")
     Call<ResponseBody> download(@Path(value = "url", encoded = true) String url);
+
+    //http://aispeech-tvui-public.oss-cn-shenzhen.aliyuncs.com/release/dangbei/version-guide-1.1.json
 }

@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.speex.speexretrofit.manager.DoanloadCallback;
-import com.speex.speexretrofit.manager.RetrofitFileManager;
+import com.speex.speexretrofit.manager.RetrofitManager;
 import com.speex.speexretrofit.utils.URLUtils;
 
 import java.io.File;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         //        final String fileUrl = "http://ksyun-cdn.ottboxer.cn/apkmarket_file/app/online_music/QQmusic_TV/qqyy_3.2.0.7_dangbei.apk";
 
-        RetrofitFileManager.getInstance().download(fileUrl, "sdcard/Download/", "download222.apk", new DoanloadCallback() {
+        RetrofitManager.getInstance().download(fileUrl, "sdcard/Download/", "download222.apk", new DoanloadCallback() {
             @Override
             public void onSuccess(File file) {
                 Log.i(TAG, "onSuccess path: " + file.getPath());

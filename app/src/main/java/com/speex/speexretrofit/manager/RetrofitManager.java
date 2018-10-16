@@ -28,19 +28,19 @@ import retrofit2.Response;
  * @updateDes ${TODO}
  */
 
-public class RetrofitFileManager {
-    private String TAG = "RetrofitFileManager";
-    private static RetrofitFileManager instance;
+public class RetrofitManager {
+    private String TAG = "RetrofitManager";
+    private static RetrofitManager instance;
 
-    private RetrofitFileManager() {
+    private RetrofitManager() {
 
     }
 
-    public static RetrofitFileManager getInstance() {
+    public static RetrofitManager getInstance() {
         if (instance == null) {
-            synchronized (RetrofitFileManager.class) {
+            synchronized (RetrofitManager.class) {
                 if (instance == null) {
-                    instance = new RetrofitFileManager();
+                    instance = new RetrofitManager();
                 }
             }
         }
