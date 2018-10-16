@@ -29,8 +29,10 @@ public class MainActivity extends AppCompatActivity {
      */
     public void download(View view) {
         //        String param = "/release/dangbei/tvui-tv/tvui-tv-dangbei-1.0.11.180929.2-1011.apk";
-        String param = "/mobilesafe/shouji360/360safesis/360MobileSafe_6.2.3.1060.apk";
-        FileDownloadEntity downloadEntity = new FileDownloadEntity(null);
+        //        String param = "/mobilesafe/shouji360/360safesis/360MobileSafe_6.2.3.1060.apk";
+
+        String param = "/release/dangbei/tvui-tv/tvui-tv-dangbei-1.0.11.180929.2-1011.apk";
+        FileDownloadEntity downloadEntity = new FileDownloadEntity(param);
         RetrofitFileUtils.downloadFile(downloadEntity, new RetrofitCallback<ResponseBody>() {
             @Override
             public void onSuccess(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -39,12 +41,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.i(TAG, "onFailure ");
+                Log.i(TAG, "onFailure " + t.getMessage());
             }
 
             @Override
-            public void onLoading(long total, long progress) {
-                super.onLoading(total, progress);
+            public void onLoading(long total, long progress, boolean done) {
+                super.onLoading(total, progress, done);
                 Log.i(TAG, "onLoading " + (float) (progress * 1.0 / total) * 100 + "%");
             }
         });

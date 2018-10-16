@@ -19,5 +19,5 @@ public abstract class RetrofitCallback<T> implements Callback<T>{
 
     public abstract void onSuccess(Call<T> call,Response<T> response);
 
-    public void onLoading(long total,long progress){}
+    public void onLoading(long total,long progress,boolean done){}
 }

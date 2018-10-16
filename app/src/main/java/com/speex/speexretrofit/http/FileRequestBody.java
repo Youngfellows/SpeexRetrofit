@@ -79,7 +79,7 @@ public final class FileRequestBody<T> extends RequestBody {
                 }
                 //增加当前写入的字节数
                 bytesWritten += byteCount;
-                callback.onLoading(contentLength,bytesWritten);
+                callback.onLoading(contentLength, bytesWritten, contentLength == bytesWritten);
             }
         };
     }

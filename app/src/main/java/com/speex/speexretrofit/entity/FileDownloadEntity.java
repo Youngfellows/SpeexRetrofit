@@ -11,14 +11,14 @@ import retrofit2.Call;
  */
 public class FileDownloadEntity extends BaseFileDownload {
 
-    private String name;
+    private String url;
 
-    public FileDownloadEntity(String name) {
-        this.name = name;
+    public FileDownloadEntity(String url) {
+        this.url = url;
     }
 
     @Override
     public Call getFileDownloadCall(RetrofitService retrofitService) {
-        return retrofitService.download();
+        return retrofitService.download(url);
     }
 }

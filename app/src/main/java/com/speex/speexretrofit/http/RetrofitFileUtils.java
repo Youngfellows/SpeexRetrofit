@@ -16,10 +16,10 @@ public class RetrofitFileUtils {
 
     public static final String BASE_URL = RetrofitService.BASE_URL;
 
-    private RetrofitFileUtils(){
+    private RetrofitFileUtils() {
     }
 
-    private static <T> RetrofitService getRetrofitService(){
+    private static <T> RetrofitService getRetrofitService() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         Retrofit retrofit = new Retrofit.Builder()
                 .client(builder.build())
@@ -30,17 +30,26 @@ public class RetrofitFileUtils {
         return retrofitService;
     }
 
-    private static <T> RetrofitService getRetrofitService(final RetrofitCallback<T> callback){
+    private static <T> RetrofitService getRetrofitService(final RetrofitCallback<T> callback) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Response proceed = chain.proceed(chain.request());
-                return proceed.newBuilder().body(new FileResponseBody<T>(proceed.body(),callback)).build();
+                return proceed.newBuilder().body(new FileResponseBody<T>(proceed.body(), callback)).build();
             }
         });
+
+
+//        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+//                .addNetworkInterceptor(
+//                        new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+//                .connectTimeout(6, TimeUnit.SECONDS)
+//                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .client(builder.build())
+//                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
                 .build();
@@ -50,10 +59,11 @@ public class RetrofitFileUtils {
 
     /**
      * 文件上传
+     *
      * @param baseFileUpload
      * @param callback
      */
-    public static <T> Call uploadFile(BaseFileUpload baseFileUpload, RetrofitCallback<T> callback){
+    public static <T> Call uploadFile(BaseFileUpload baseFileUpload, RetrofitCallback<T> callback) {
         Call call = baseFileUpload.getFileUploadCall(getRetrofitService());
         call.enqueue(callback);
         return call;
@@ -61,10 +71,11 @@ public class RetrofitFileUtils {
 
     /**
      * 文件下载
+     *
      * @param baseFileDownload
      * @param callback
      */
-    public static <T> Call downloadFile(BaseFileDownload baseFileDownload,RetrofitCallback<T> callback){
+    public static <T> Call downloadFile(BaseFileDownload baseFileDownload, RetrofitCallback<T> callback) {
         Call call = baseFileDownload.getFileDownloadCall(getRetrofitService(callback));
         call.enqueue(callback);
         return call;
