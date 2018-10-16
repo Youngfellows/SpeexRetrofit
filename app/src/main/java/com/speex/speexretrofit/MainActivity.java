@@ -111,4 +111,38 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 获取版本更新信息
+     *
+     * @param view
+     */
+    public void upgradeVersion(View view) {
+
+        /**
+         * 触发网络请求,先拉取是否可以更新
+         * mBaseUrl: http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade ,productId: 278572232 ,deviceId: 4d07e4be9184e15a8b483c97077e171b
+         * url = http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade?productId=278572232&versionCode=1005&deviceId=4d07e4be9184e15a8b483c97077e171b&packageName=com.aispeech.tvui
+         */
+        String url = "http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade";
+        String productId = "278572232";
+        String versionCode = "1005";
+        String deviceId = "4d07e4be9184e15a8b483c97077e171b";
+        String packageName = "com.aispeech.tvui";
+
+        //        mBaseUrl: http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade ,productId: 278572232 ,deviceId: 4d07e4be9184e15a8b483c97077e171b
+        //        url = http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade?productId=278572232&versionCode=1005&deviceId=4d07e4be9184e15a8b483c97077e171b&packageName=com.aispeech.tvui
+
+        RetrofitManager.getInstance().upgradeVersion(url, productId, versionCode, deviceId, packageName, new UpgradeRequestCallBack() {
+            @Override
+            public void requestSuccess(String data) {
+                Log.i(TAG, "requestSuccess 版本更新信息==>> " + data);
+            }
+
+            @Override
+            public void requestError(String exception) {
+                Log.e(TAG, "requestError " + exception);
+            }
+        });
+    }
+
 }

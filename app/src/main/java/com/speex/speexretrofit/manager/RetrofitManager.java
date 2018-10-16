@@ -136,7 +136,8 @@ public class RetrofitManager {
     /**
      * 获取更新配置单
      *
-     * @param configUrl
+     * @param configUrl 配置文件url
+     * @param callback  回调
      */
     public void upgradeConfig(String configUrl, final UpgradeRequestCallBack callback) {
 
@@ -174,6 +175,76 @@ public class RetrofitManager {
                 }
             }
         });
+    }
+
+    /**
+     * 请求版本更新
+     *
+     * @param baseURL     升级环境
+     * @param productId   产品ID
+     * @param versionCode 版本号
+     * @param deviceId    设备号
+     * @param packageName 包名
+     * @param callback    回调
+     */
+    public void upgradeVersion(String baseURL, String productId, String versionCode, String deviceId, String packageName, final UpgradeRequestCallBack callback) {
+
+        /**
+         * 触发网络请求,先拉取是否可以更新
+         * mBaseUrl: http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade ,productId: 278572232 ,deviceId: 4d07e4be9184e15a8b483c97077e171b
+         * url = http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade?productId=278572232&versionCode=1005&deviceId=4d07e4be9184e15a8b483c97077e171b&packageName=com.aispeech.tvui
+         */
+
+        //        Map<String, String> map = new HashMap<>();
+        //        map.put("productId", productId);
+        //        map.put("versionCode", versionCode);
+        //        map.put("deviceId", deviceId);
+        //        map.put("packageName", packageName);
+
+        String url = URLUtils.getUrl(baseURL);
+        String baseUrl = URLUtils.getHost(baseURL);
+        Log.i(TAG, baseUrl);
+        Log.i(TAG, url);
+
+        baseUrl = baseUrl + ":8089";
+        url = "skyline-iot-api/api/v2/tv/versionUpgrade";
+
+        Log.i(TAG, baseUrl);
+        Log.i(TAG, url);
+
+
+        IApiService iApiService = RetrofitClient.getInstance(baseUrl).getiApiService();
+
+        Call<ResponseBody> call = iApiService.upgradeVersion(url, productId, versionCode, deviceId, packageName);
+        //        Call<ResponseBody> call = iApiService.upgradeVersion(productId, versionCode, deviceId, packageName);
+        call.enqueue(new RetrofitCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String data = response.body().string();
+                        Log.i(TAG, "data -->>>  " + data);
+                        if (callback != null) {
+                            callback.requestSuccess(data);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        if (callback != null) {
+                            callback.requestError(e.getMessage());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e(TAG, "onFailure " + t.getMessage());
+                if (callback != null) {
+                    callback.requestError(t.getMessage());
+                }
+            }
+        });
+
     }
 
 }
