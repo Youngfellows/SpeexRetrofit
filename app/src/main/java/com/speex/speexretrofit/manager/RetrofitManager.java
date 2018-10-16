@@ -195,6 +195,13 @@ public class RetrofitManager {
          * url = http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade?productId=278572232&versionCode=1005&deviceId=4d07e4be9184e15a8b483c97077e171b&packageName=com.aispeech.tvui
          */
 
+        /**
+         *  不正常
+         *  http://test.iot.aispeech.com/:8089/skyline-iot-api/api/v2/tv/versionUpgrade?productId=278572232&versionCode=1005&deviceId=4d07e4be9184e15a8b483c97077e171b&packageName=com.aispeech.tvui http/1.1
+         *  正常
+         *  http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade?productId=278572232&versionCode=1005&deviceId=4d07e4be9184e15a8b483c97077e171b&packageName=com.aispeech.tvui
+         */
+
         //        Map<String, String> map = new HashMap<>();
         //        map.put("productId", productId);
         //        map.put("versionCode", versionCode);
