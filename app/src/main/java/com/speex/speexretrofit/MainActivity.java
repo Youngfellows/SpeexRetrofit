@@ -9,7 +9,7 @@ import com.alibaba.fastjson.JSON;
 import com.speex.speexretrofit.bean.Content;
 import com.speex.speexretrofit.bean.UpdateAppConfigBean;
 import com.speex.speexretrofit.interfaces.UpgradeRequestCallBack;
-import com.speex.speexretrofit.manager.DoanloadCallback;
+import com.speex.speexretrofit.interfaces.DoanloadCallback;
 import com.speex.speexretrofit.manager.RetrofitManager;
 import com.speex.speexretrofit.utils.URLUtils;
 

@@ -6,17 +6,6 @@ import android.util.Log;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * @author henrychen
- * @version $Rev$
- * @email henrychen@aispeech.com
- * @time 2018/10/16 21:57
- * @des ${TODO}
- * @updateAuthor $Author$
- * @updateDate $Date$
- * @updateDes ${TODO}
- */
-
 public class URLUtils {
     private static String TAG = "URLUtils";
 

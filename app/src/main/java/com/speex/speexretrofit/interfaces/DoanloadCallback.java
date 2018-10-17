@@ -1,17 +1,7 @@
-package com.speex.speexretrofit.manager;
+package com.speex.speexretrofit.interfaces;
 
 import java.io.File;
 
-/**
- * @author henrychen
- * @version $Rev$
- * @email henrychen@aispeech.com
- * @time 2018/10/16 22:57
- * @des ${TODO}
- * @updateAuthor $Author$
- * @updateDate $Date$
- * @updateDes ${TODO}
- */
 
 public interface DoanloadCallback {
 

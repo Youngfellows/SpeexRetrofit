@@ -3,6 +3,7 @@ package com.speex.speexretrofit.manager;
 import android.util.Log;
 
 import com.speex.speexretrofit.entity.FileDownloadEntity;
+import com.speex.speexretrofit.interfaces.DoanloadCallback;
 import com.speex.speexretrofit.interfaces.UpgradeRequestCallBack;
 import com.speex.speexretrofit.net.IApiService;
 import com.speex.speexretrofit.net.RetrofitCallback;
@@ -21,17 +22,6 @@ import java.util.Map;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
-
-/**
- * @author henrychen
- * @version $Rev$
- * @email henrychen@aispeech.com
- * @time 2018/10/16 21:29
- * @des ${TODO}
- * @updateAuthor $Author$
- * @updateDate $Date$
- * @updateDes ${TODO}
- */
 
 public class RetrofitManager {
     private String TAG = "RetrofitManager";
