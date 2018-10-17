@@ -81,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void upgradeConfig(View view) {
-        String configUrl = "http://aispeech-tvui-public.oss-cn-shenzhen.aliyuncs.com/release/dangbei/version-guide-1.1.json";
+        //        String configUrl = "http://aispeech-tvui-public.oss-cn-shenzhen.aliyuncs.com/release/dangbei/version-guide-1.1.json";
+        String configUrl = "http://aispeech-tvui-public.oss-cn-shenzhen.aliyuncs.com/release/tvuipublic/version-guide-1.1.json";
 
         RetrofitManager.getInstance().upgradeConfig(configUrl, new UpgradeRequestCallBack() {
             @Override
@@ -123,7 +124,8 @@ public class MainActivity extends AppCompatActivity {
          * mBaseUrl: http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade ,productId: 278572232 ,deviceId: 4d07e4be9184e15a8b483c97077e171b
          * url = http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade?productId=278572232&versionCode=1005&deviceId=4d07e4be9184e15a8b483c97077e171b&packageName=com.aispeech.tvui
          */
-        String url = "http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade";
+        //        String url = "http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade";//测试环境
+        String url = "http://api.iot.aispeech.com/skyline-iot-api/api/v2/tv/versionUpgrade";//正式环境
         String productId = "278572232";
         String versionCode = "1005";
         String deviceId = "4d07e4be9184e15a8b483c97077e171b";

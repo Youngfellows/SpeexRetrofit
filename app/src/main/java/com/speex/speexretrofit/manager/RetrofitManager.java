@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -67,69 +69,75 @@ public class RetrofitManager {
         String baseUrl = URLUtils.getHost(fileUrl);
         Log.i(TAG, baseUrl);
         Log.i(TAG, url);
+        try {
+            FileDownloadEntity downloadEntity = new FileDownloadEntity(url);
+            RetrofitFileUtils.downloadFile(baseUrl, downloadEntity, new RetrofitCallback<ResponseBody>() {
+                @Override
+                public void onSuccess(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.i(TAG, "onSuccess ");
+                    try {
+                        InputStream is = response.body().byteStream();
+                        Log.i("TAG", "is = " + is.toString());
 
-        FileDownloadEntity downloadEntity = new FileDownloadEntity(url);
-        RetrofitFileUtils.downloadFile(baseUrl, downloadEntity, new RetrofitCallback<ResponseBody>() {
-            @Override
-            public void onSuccess(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.i(TAG, "onSuccess ");
-                try {
-                    InputStream is = response.body().byteStream();
-                    Log.i("TAG", "is = " + is.toString());
+                        // String path = "/sdcard/Download";
+                        // File f = new File(path);
 
-                    // String path = "/sdcard/Download";
-                    // File f = new File(path);
+                        File f = new File(dirPath);
+                        if (!f.exists()) {
+                            f.mkdirs();
+                        }
 
-                    File f = new File(dirPath);
-                    if (!f.exists()) {
-                        f.mkdirs();
+                        //File file = new File(f, "download.apk");
+                        File file = new File(f, fileName);
+                        if (file.exists()) {
+                            Log.i(TAG, "文件已经纯在了，删除");
+                            file.delete();
+                        }
+
+                        FileOutputStream fos = new FileOutputStream(file);
+                        BufferedInputStream bis = new BufferedInputStream(is);
+                        byte[] buffer = new byte[1024];
+                        int len;
+                        while ((len = bis.read(buffer)) != -1) {
+                            fos.write(buffer, 0, len);
+                        }
+                        fos.flush();
+                        fos.close();
+                        bis.close();
+                        is.close();
+                        Log.i(TAG, "文件保存成功");
+
+                        if (callback != null) {
+                            callback.onSuccess(file);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                }
 
-                    //File file = new File(f, "download.apk");
-                    File file = new File(f, fileName);
-                    if (file.exists()) {
-                        Log.i(TAG, "文件已经纯在了，删除");
-                        file.delete();
-                    }
-
-                    FileOutputStream fos = new FileOutputStream(file);
-                    BufferedInputStream bis = new BufferedInputStream(is);
-                    byte[] buffer = new byte[1024];
-                    int len;
-                    while ((len = bis.read(buffer)) != -1) {
-                        fos.write(buffer, 0, len);
-                    }
-                    fos.flush();
-                    fos.close();
-                    bis.close();
-                    is.close();
-                    Log.i(TAG, "文件保存成功");
-
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG, "onFailure " + t.getMessage());
                     if (callback != null) {
-                        callback.onSuccess(file);
+                        callback.onFailure(t);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.i(TAG, "onFailure " + t.getMessage());
-                if (callback != null) {
-                    callback.onFailure(t);
+                @Override
+                public void onLoading(long total, long progress, boolean done) {
+                    //super.onLoading(total, progress, done);
+                    Log.i(TAG, "onLoading " + (float) (progress * 1.0 / total) * 100 + "% , " + (done ? "下载完成" : "未下载完成"));
+                    if (callback != null) {
+                        callback.onLoading(total, progress, done);
+                    }
                 }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (callback != null) {
+                callback.onFailure(new Throwable("baseUrl参数异常: " + baseUrl));
             }
-
-            @Override
-            public void onLoading(long total, long progress, boolean done) {
-                //super.onLoading(total, progress, done);
-                Log.i(TAG, "onLoading " + (float) (progress * 1.0 / total) * 100 + "% , " + (done ? "下载完成" : "未下载完成"));
-                if (callback != null) {
-                    callback.onLoading(total, progress, done);
-                }
-            }
-        });
+        }
     }
 
 
@@ -140,41 +148,48 @@ public class RetrofitManager {
      * @param callback  回调
      */
     public void upgradeConfig(String configUrl, final UpgradeRequestCallBack callback) {
-
         String url = URLUtils.getUrl(configUrl);
         String baseUrl = URLUtils.getHost(configUrl);
         Log.i(TAG, baseUrl);
         Log.i(TAG, url);
 
-        IApiService iApiService = RetrofitClient.getInstance(baseUrl).getiApiService();
-        Call<ResponseBody> call = iApiService.upgradeConfig(url);
-        call.enqueue(new RetrofitCallback<ResponseBody>() {
-            @Override
-            public void onSuccess(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    try {
-                        String data = response.body().string();
-                        Log.i(TAG, "data -->>>  " + data);
-                        if (callback != null) {
-                            callback.requestSuccess(data);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        if (callback != null) {
-                            callback.requestError(e.getMessage());
+        try {
+            IApiService iApiService = RetrofitClient.getInstance(baseUrl).getiApiService();
+            Call<ResponseBody> call = iApiService.upgradeConfig(url);
+            call.enqueue(new RetrofitCallback<ResponseBody>() {
+                @Override
+                public void onSuccess(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        try {
+                            String data = response.body().string();
+                            Log.i(TAG, "data -->>>  " + data);
+                            if (callback != null) {
+                                callback.requestSuccess(data);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            if (callback != null) {
+                                callback.requestError(e.getMessage());
+                            }
                         }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG, "onFailure " + t.getMessage());
-                if (callback != null) {
-                    callback.requestError(t.getMessage());
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e(TAG, "onFailure " + t.getMessage());
+                    if (callback != null) {
+                        callback.requestError(t.getMessage());
+                    }
                 }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (callback != null) {
+                callback.requestError("baseUrl参数异常: " + baseUrl);
             }
-        });
+        }
     }
 
     /**
@@ -202,56 +217,55 @@ public class RetrofitManager {
          *  http://test.iot.aispeech.com:8089/skyline-iot-api/api/v2/tv/versionUpgrade?productId=278572232&versionCode=1005&deviceId=4d07e4be9184e15a8b483c97077e171b&packageName=com.aispeech.tvui
          */
 
-        //        Map<String, String> map = new HashMap<>();
-        //        map.put("productId", productId);
-        //        map.put("versionCode", versionCode);
-        //        map.put("deviceId", deviceId);
-        //        map.put("packageName", packageName);
+        Map<String, String> map = new HashMap<>();
+        map.put("productId", productId);
+        map.put("versionCode", versionCode);
+        map.put("deviceId", deviceId);
+        map.put("packageName", packageName);
 
         String url = URLUtils.getUrl(baseURL);
         String baseUrl = URLUtils.getHost(baseURL);
         Log.i(TAG, baseUrl);
         Log.i(TAG, url);
 
-        baseUrl = baseUrl + ":8089";
-        url = "skyline-iot-api/api/v2/tv/versionUpgrade";
+        try {
+            IApiService iApiService = RetrofitClient.getInstance(baseUrl).getiApiService();
 
-        Log.i(TAG, baseUrl);
-        Log.i(TAG, url);
-
-
-        IApiService iApiService = RetrofitClient.getInstance(baseUrl).getiApiService();
-
-        Call<ResponseBody> call = iApiService.upgradeVersion(url, productId, versionCode, deviceId, packageName);
-        //        Call<ResponseBody> call = iApiService.upgradeVersion(productId, versionCode, deviceId, packageName);
-        call.enqueue(new RetrofitCallback<ResponseBody>() {
-            @Override
-            public void onSuccess(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    try {
-                        String data = response.body().string();
-                        Log.i(TAG, "data -->>>  " + data);
-                        if (callback != null) {
-                            callback.requestSuccess(data);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        if (callback != null) {
-                            callback.requestError(e.getMessage());
+            //Call<ResponseBody> call = iApiService.upgradeVersion(url, productId, versionCode, deviceId, packageName);//带参数
+            Call<ResponseBody> call = iApiService.upgradeVersion(url, map);//参数列表
+            call.enqueue(new RetrofitCallback<ResponseBody>() {
+                @Override
+                public void onSuccess(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        try {
+                            String data = response.body().string();
+                            Log.i(TAG, "data -->>>  " + data);
+                            if (callback != null) {
+                                callback.requestSuccess(data);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            if (callback != null) {
+                                callback.requestError(e.getMessage());
+                            }
                         }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG, "onFailure " + t.getMessage());
-                if (callback != null) {
-                    callback.requestError(t.getMessage());
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e(TAG, "onFailure " + t.getMessage());
+                    if (callback != null) {
+                        callback.requestError(t.getMessage());
+                    }
                 }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (callback != null) {
+                callback.requestError("baseUrl参数异常: " + baseUrl);
             }
-        });
-
+        }
     }
 
 }

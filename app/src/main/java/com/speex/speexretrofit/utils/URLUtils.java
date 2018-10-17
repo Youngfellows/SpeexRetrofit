@@ -28,9 +28,28 @@ public class URLUtils {
      */
     public static String getHost(String path) {
         String host = null;
+        String key = null;
         try {
+            //            URL url = new URL(path);
+            //            host = "http://" + url.getHost();
+
             URL url = new URL(path);
-            host = "http://" + url.getHost();
+            host = url.getHost();
+            if (!TextUtils.isEmpty(host)) {
+                String[] splits = path.split(host);
+                if (splits != null && splits.length == 2) {
+                    key = splits[1];
+                }
+                host = "http://" + host;
+                if (key.startsWith(":")) {
+                    int index = key.indexOf("/");
+                    String port = key.substring(0, index);
+                    host += port;
+                    Log.i(TAG, "该url以:开头 port = " + port);
+                }
+            }
+
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -52,11 +71,14 @@ public class URLUtils {
             String host = url.getHost();
             if (!TextUtils.isEmpty(host)) {
                 String[] splits = path.split(host);
-                for (int i = 0; i < splits.length; i++) {
-
-                }
                 if (splits != null && splits.length == 2) {
                     key = splits[1];
+                }
+
+                if (key.startsWith(":")) {
+                    Log.i(TAG, "该url以:开头");
+                    int index = key.indexOf("/");
+                    key = key.substring(index);
                 }
             }
 
